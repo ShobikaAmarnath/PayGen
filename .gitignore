@@ -1,0 +1,22 @@
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Build artifacts from PyInstaller
+build/
+dist/
+*.spec
+
+# Generated output folders
+# This pattern will ignore any folder that starts with "Payslips_"
+Payslips_*/
+
+# IDE and OS specific files
+.vscode/
+.idea/
+*.DS_Store
