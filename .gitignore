@@ -20,3 +20,5 @@ Payslips_*/
 .vscode/
 .idea/
 *.DS_Store
+
+test_pdf.py
