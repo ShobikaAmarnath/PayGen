@@ -22,3 +22,4 @@ Payslips_*/
 *.DS_Store
 
 test_pdf.py
+test_email.py
