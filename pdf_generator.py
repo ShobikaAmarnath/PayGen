@@ -2,6 +2,7 @@
 import os
 import sys
 from pathlib import Path
+import pandas as pd
 from reportlab.platypus import (
     SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
 )
@@ -29,6 +30,7 @@ def register_fonts():
 
 def create_payslip(employee_data, salary_details):
     """Generates and saves a single PDF payslip with the new layout."""
+    print(f"Generating payslip for {employee_data['Employee_Name']}...")
     pay_period = employee_data['Period']
     output_dir_name = f"Payslips_{pay_period.strftime('%b_%Y')}"
     output_dir = Path(output_dir_name)
@@ -46,7 +48,7 @@ def create_payslip(employee_data, salary_details):
 
     # --- NEW: Header table with Logo on left and Company Address on right ---
     try:
-        logo = Image(resource_path("company_logo.png"), width=200, height=60)
+        logo = Image(resource_path("company_logo.png"), width=200, height=80)
     except:
         logo = Paragraph("<b>LOGO</b>", bold_style)
 
@@ -67,13 +69,19 @@ def create_payslip(employee_data, salary_details):
     elements.append(Paragraph(f"<b>Payslip for {employee_data['Period'].strftime('%B %Y')}</b>", ParagraphStyle("heading", fontName="DejaVuSans-Bold", fontSize=13, alignment=1, spaceBefore=15, spaceAfter=15)))
 
     # --- Bordered table for Employee Details ---
+    doj = employee_data['Date_of_Joining']
+    if isinstance(doj, pd.Timestamp):
+        doj_str = doj.strftime('%d-%b-%Y')
+    else:
+        doj_str = str(doj)
+
     details_data = [
         [Paragraph('<b>Employee Name</b>', bold_style), employee_data['Employee_Name'], Paragraph('<b>Bank Name</b>', bold_style), employee_data['Bank_Name']],
         [Paragraph('<b>Employee Number</b>', bold_style), employee_data['Employee_ID'], Paragraph('<b>Bank Account No</b>', bold_style), employee_data['Bank_Account_No']],
         [Paragraph('<b>Department</b>', bold_style), employee_data['Department'], Paragraph('<b>PAN Number</b>', bold_style), employee_data['PAN_Number']],
         [Paragraph('<b>Designation</b>', bold_style), employee_data['Designation'], Paragraph('<b>PF Account Number</b>', bold_style), employee_data['PF_Account_Number']],
         [Paragraph('<b>Location</b>', bold_style), employee_data['Location'], Paragraph('<b>ESI Number</b>', bold_style), employee_data['ESI_Number']],
-        [Paragraph('<b>Date of Joining</b>', bold_style), employee_data['Date_of_Joining'].strftime('%d-%b-%Y'), Paragraph('<b>UAN Number</b>', bold_style), employee_data['UAN_Number']],
+        [Paragraph('<b>Date of Joining</b>', bold_style), doj_str, Paragraph('<b>UAN Number</b>', bold_style), employee_data['UAN_Number']],
         [Paragraph('<b>Days Worked</b>', bold_style), employee_data['Days_Worked'], Paragraph('<b>LOP Days</b>', bold_style), employee_data['LOP_Days']],
     ]
     
@@ -136,5 +144,6 @@ def create_payslip(employee_data, salary_details):
     elements.append(summary_table)
 
     doc.build(elements)
+    print(f"Successfully created payslip for {employee_data['Employee_Name']}: {pdf_path}")
 
     return pdf_path, output_dir

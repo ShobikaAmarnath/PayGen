@@ -25,3 +25,8 @@ test_pdf.py
 test_email.py
 logo.png
 logo2.png
+clear_credentials.py
+convert_icon.py
+icon.png
+
+extra/
